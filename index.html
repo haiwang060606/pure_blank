@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>纯黑屏幕</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // 浏览器识别函数
+        function getBrowser() {
+            const userAgent = navigator.userAgent;
+            let browser = '未知浏览器';
+            
+            if (userAgent.includes('Chrome')) {
+                browser = 'Chrome';
+            } else if (userAgent.includes('Firefox')) {
+                browser = 'Firefox';
+            } else if (userAgent.includes('Safari')) {
+                browser = 'Safari';
+            } else if (userAgent.includes('Edge')) {
+                browser = 'Edge';
+            } else if (userAgent.includes('Opera') || userAgent.includes('OPR')) {
+                browser = 'Opera';
+            }
+            
+            return browser;
+        }
+        
+        // 获取全屏快捷键
+        function getFullscreenKey() {
+            const browser = getBrowser();
+            if (browser === 'Mac Safari') {
+                return 'Command + Ctrl + F';
+            } else if (browser.includes('Mac')) {
+                return 'Command + Ctrl + F';
+            } else {
+                return 'F11';
+            }
+        }
+        
+        // 弹窗提示
+        const browser = getBrowser();
+        const fullscreenKey = getFullscreenKey();
+        const alertMsg = `您正在使用 ${browser} 浏览器，全屏快捷键为：${fullscreenKey}`;
+        
+        const alertDiv = document.createElement('div');
+        alertDiv.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            z-index: 9999;
+            text-align: center;
+        `;
+        alertDiv.textContent = alertMsg;
+        document.body.appendChild(alertDiv);
+        
+        // 3秒后自动关闭
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+        
+        // 发送访问统计
+        fetch('/api/visit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ browser: browser })
+        }).catch(err => console.error('访问统计失败:', err));
+    </script>
+</body>
+</html>
